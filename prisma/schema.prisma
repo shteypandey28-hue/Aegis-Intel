@@ -1,13 +1,48 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Platform {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listings Listing[]
+}
+
+model Keyword {
+  id         String   @id @default(uuid())
+  term       String   @unique
+  type       String   // "SCIENTIFIC", "TRADE_NAME", "CODED_PHRASE"
+  riskWeight Int      @default(1) // Can be 1, 2, 3 based on severity
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Listing {
+  id              String   @id @default(uuid())
+  platformId      String
+  title           String
+  description     String
+  seller          String
+  url             String
+  postedTime      DateTime
+  riskLevel       String   // "LIKELY_LEGAL", "SUSPICIOUS", "HIGH_RISK"
+  confidenceScore Int      // 0 - 100
+  explanation     String
+  matchedWords    String   // JSON string of matched words
+  archivedText    String
+  status          String   @default("ACTIVE") // "ACTIVE", "FLAGGED", "ARCHIVED", "RESOLVED"
+  analystNotes    String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  platform Platform @relation(fields: [platformId], references: [id])
 }
