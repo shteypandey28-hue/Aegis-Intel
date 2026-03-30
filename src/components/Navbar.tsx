@@ -5,6 +5,7 @@ import { Bell, Search, X, ShieldAlert, CheckCircle2, AlertTriangle, Info, Chevro
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { logout } from '@/app/login/actions'
+import { useSession } from '@/lib/useSession'
 
 // ── Mock Notifications ──────────────────────────────────────────────────────
 const MOCK_NOTIFICATIONS = [
@@ -75,7 +76,9 @@ function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () =
 
 type UserData = { id: string; email: string; name: string; picture: string | null; provider: string } | null
 
-export default function Navbar({ user }: { user?: UserData }) {
+export default function Navbar({ user: userProp }: { user?: UserData }) {
+  const session = useSession()
+  const user = session || userProp
   const displayName = user?.name || 'Agent Alpha'
   const displayEmail = user?.email || 'agent@aegis.io'
   const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'A'

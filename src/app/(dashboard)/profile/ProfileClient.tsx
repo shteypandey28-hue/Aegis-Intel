@@ -6,6 +6,7 @@ import {
   User, Mail, Phone, ShieldCheck, Edit3, Save, X,
   BadgeCheck, Lock, Fingerprint, Activity
 } from 'lucide-react'
+import { useSession } from '@/lib/useSession'
 
 type SessionUser = {
   id: string
@@ -52,7 +53,10 @@ function ProfileField({
   )
 }
 
-export default function ProfileClient({ user }: { user: SessionUser }) {
+export default function ProfileClient({ user: userProp }: { user: SessionUser }) {
+  const session = useSession()
+  const user = session || userProp
+
   const INITIAL_PROFILE = {
     codeName: user?.name ? user.name.split(' ')[0].toUpperCase() + '-AGENT' : 'SHADOW-WARDEN',
     name: user?.name || 'Unknown Agent',

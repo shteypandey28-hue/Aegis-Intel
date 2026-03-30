@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { LayoutDashboard, AlertOctagon, Settings, ShieldAlert, LogOut, UserCircle, BarChart2, Dna } from 'lucide-react'
 import { logout } from '@/app/login/actions'
+import { useSession } from '@/lib/useSession'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -17,7 +18,9 @@ const navItems = [
 
 type UserData = { id: string; email: string; name: string; picture: string | null; provider: string } | null
 
-export default function Sidebar({ user }: { user?: UserData }) {
+export default function Sidebar({ user: userProp }: { user?: UserData }) {
+  const session = useSession()
+  const user = session || userProp
   const displayName = user?.name || 'SHADOW-WARDEN'
   const pathname = usePathname()
 

@@ -15,7 +15,7 @@ async function setSessionCookie(data: { email: string; name?: string; provider: 
     provider: data.provider,
     loginAt: new Date().toISOString(),
   }), {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 7, // 7 days
