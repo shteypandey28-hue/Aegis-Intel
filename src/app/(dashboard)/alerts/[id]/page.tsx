@@ -11,6 +11,14 @@ import {
 import Link from 'next/link'
 import { CaseFileClient } from './CaseFileClient'
 
+export const dynamic = 'force-static'
+export const revalidate = false
+
+export async function generateStaticParams() {
+  const listings = await prisma.listing.findMany({ select: { id: true } })
+  return listings.map((l) => ({ id: l.id }))
+}
+
 // Mirror detection.ts constants for categorization
 const TAXONOMY_DICT = ['loxodonta', 'panthera', 'rhinocerotidae', 'manis', 'testudines', 'elephantidae']
 const SLANG_DICT = ['white gold', 'jelly', 'scales', 'horn', 'ivory', 'tusk', 'blood red', 'turtle shell']

@@ -2,6 +2,9 @@ import React from 'react'
 import prisma from '@/lib/prisma'
 import LiveDashboardView from './LiveDashboardView'
 
+export const dynamic = 'force-static'
+export const revalidate = false
+
 export default async function DashboardPage() {
   const totalListings = await prisma.listing.count()
   const highRisk = await prisma.listing.count({ where: { riskLevel: 'HIGH_RISK' } })

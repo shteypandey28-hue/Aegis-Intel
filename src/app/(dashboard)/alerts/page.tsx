@@ -4,37 +4,17 @@ import { AlertListClient } from './AlertListClient'
 import { AlertsFilterBar } from './AlertsFilterBar'
 import { Activity } from 'lucide-react'
 
-type SearchParams = { q?: string; risk?: string; platform?: string; sort?: string }
+export const dynamic = 'force-static'
+export const revalidate = false
 
-export default async function AlertsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const sp = await searchParams
-  const { q, risk, platform, sort } = sp
-
-  // Build Prisma where clause
-  const where: any = {
-    riskLevel: risk ? { equals: risk } : { in: ['HIGH_RISK', 'SUSPICIOUS'] },
-  }
-
-  if (q) {
-    where.OR = [
-      { title: { contains: q } },
-      { description: { contains: q } },
-      { matchedWords: { contains: q } },
-      { seller: { contains: q } },
-    ]
-  }
-
-  if (platform) {
-    where.platform = { name: { equals: platform } }
-  }
-
-  // Build orderBy
-  let orderBy: any = { postedTime: 'desc' }
-  if (sort === 'confidence') orderBy = { confidenceScore: 'desc' }
-  if (sort === 'risk') orderBy = [{ riskLevel: 'desc' }, { confidenceScore: 'desc' }]
-
+export default async function AlertsPage() {
   const [alerts, platforms] = await Promise.all([
-    prisma.listing.findMany({ where, orderBy, include: { platform: true }, take: 50 }),
+    prisma.listing.findMany({
+      where: { riskLevel: { in: ['HIGH_RISK', 'SUSPICIOUS'] } },
+      orderBy: { postedTime: 'desc' },
+      include: { platform: true },
+      take: 50,
+    }),
     prisma.platform.findMany({ select: { name: true } }),
   ])
 
