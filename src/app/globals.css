@@ -140,3 +140,10 @@
     @apply font-sans;
   }
 }
+
+/* Hide Next.js Dev/Build Indicators (the annoying 'N' logo) */
+#nextjs-dev-tools,
+nextjs-portal,
+#__next-build-watcher {
+  display: none !important;
+}
