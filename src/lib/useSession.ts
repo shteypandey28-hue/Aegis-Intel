@@ -8,6 +8,7 @@ type SessionUser = {
   name: string
   picture: string | null
   provider: string
+  loginAt?: string
 } | null
 
 export function useSession(): SessionUser {

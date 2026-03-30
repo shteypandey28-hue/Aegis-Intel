@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.redirect(redirectUrl)
 
     response.cookies.set('aegis_session', sessionData, {
-      httpOnly: true,
+      httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days

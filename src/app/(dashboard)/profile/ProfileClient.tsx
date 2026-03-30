@@ -14,6 +14,7 @@ type SessionUser = {
   name: string
   picture: string | null
   provider: string
+  loginAt?: string
 } | null
 
 function ProfileField({
@@ -57,15 +58,22 @@ export default function ProfileClient({ user: userProp }: { user: SessionUser })
   const session = useSession()
   const user = session || userProp
 
+  // Generate a stable agent ID from user's ID or email
+  const agentId = user?.id
+    ? 'AGT-' + user.id.slice(-6).toUpperCase()
+    : 'AGT-' + (user?.email || 'unknown').split('@')[0].replace(/[^a-zA-Z0-9]/g, '').slice(0, 6).toUpperCase()
+
   const INITIAL_PROFILE = {
     codeName: user?.name ? user.name.split(' ')[0].toUpperCase() + '-AGENT' : 'SHADOW-WARDEN',
     name: user?.name || 'Unknown Agent',
     email: user?.email || 'unassigned@aegisintel.org',
     mobile: '+91 98765 43210',
+    agentId: agentId,
     clearanceLevel: 'ALPHA-7',
     department: 'Wildlife Intelligence Division',
-    joinDate: '2024-01-15',
+    joinDate: user?.loginAt ? new Date(user.loginAt).toISOString().split('T')[0] : '2024-01-15',
     status: 'ACTIVE',
+    provider: user?.provider === 'google' ? 'Google OAuth 2.0' : user?.provider === 'email' ? 'Email Auth' : 'Local Session',
   }
 
   const [profile, setProfile] = useState(INITIAL_PROFILE)
@@ -191,6 +199,12 @@ export default function ProfileClient({ user: userProp }: { user: SessionUser })
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <ProfileField
+              icon={Fingerprint}
+              label="Agent ID"
+              value={profile.agentId}
+              editable={false}
+            />
+            <ProfileField
               icon={ShieldCheck}
               label="Code Name"
               value={profile.codeName}
@@ -228,6 +242,12 @@ export default function ProfileClient({ user: userProp }: { user: SessionUser })
               icon={BadgeCheck}
               label="Department"
               value={profile.department}
+              editable={false}
+            />
+            <ProfileField
+              icon={Activity}
+              label="Auth Provider"
+              value={profile.provider}
               editable={false}
             />
           </div>
